@@ -1,0 +1,32 @@
+version: '3.3'
+services:
+  mysql-server:
+    image: mysql:latest
+    container_name: 'mysql-liferay-server'
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      TZ: America/Lima
+      MYSQL_DATABASE: lportal
+      MYSQL_USER: lportal
+      MYSQL_PASSWORD: lportal
+    ports:
+      - 13306:3306
+    networks:
+      - liferaynet
+  liferay:
+    depends_on:
+      - mysql-server
+    image: liferay/portal:latest
+    volumes:
+      - ./liferay/deploy:/opt/liferay/deploy
+      - ./liferay/conf/context.xml:/opt/liferay/tomcat/conf/context.xml
+      - ./liferay/conf/portal-ext.properties:/opt/liferay/portal-ext.properties
+    ports:
+      - 8088:8080
+    networks:
+      - liferaynet
+networks:
+  liferaynet:
+    
